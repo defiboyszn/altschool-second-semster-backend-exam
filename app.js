@@ -85,14 +85,19 @@ app.post('/login', async (req, res) => {
                 { expiresIn: "1h" }
             );
 
-            res.status(200).json({ message: "Successfully logged in", data: { ...user.toJSON(), token } });
+            // Send the response here and return to exit the function
+            return res.status(200).json({ message: "Successfully logged in", data: { ...user.toJSON(), token } });
         }
-        res.status(401).json({ message: "Invalid credentials" });
+
+        // Send the response here and return to exit the function
+        return res.status(401).json({ message: "Invalid credentials" });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Something went wrong, please try again later." });
+        // Send the response here and return to exit the function
+        return res.status(500).json({ message: "Something went wrong, please try again later." });
     }
 });
+
 
 
 app.post('/register', async (req, res) => {
