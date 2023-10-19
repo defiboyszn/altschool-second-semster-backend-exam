@@ -128,32 +128,32 @@ app.post('/register', async (req, res) => {
     }
 });
 
-app.get('/user/blogs',verifyAuthToken, async (req, res) => {
+app.get('/user/blogs', verifyAuthToken, async (req, res) => {
     try {
-      const { page = 1, limit = 20, state } = req.query;
-      const skip = (page - 1) * limit;
-  
-      const query = Blog.find({ author: req.user?._id });
-  
-      if (state) {
-        query.where('state').equals(state);
-      }
-  
-      const totalCount = await Blog.countDocuments(query);
-      const blogs = await query.skip(skip).limit(parseInt(limit));
-  
-      res.status(200).json({
-        message: "User's blogs fetched successfully",
-        data: blogs,
-        total: totalCount,
-        page: parseInt(page),
-        limit: parseInt(limit),
-      });
+        const { page = 1, limit = 20, state } = req.query;
+        const skip = (page - 1) * limit;
+
+        const query = Blog.find({ author: req.user?._id });
+
+        if (state) {
+            query.where('state').equals(state);
+        }
+
+        const totalCount = await Blog.countDocuments(query);
+        const blogs = await query.skip(skip).limit(parseInt(limit));
+
+        res.status(200).json({
+            message: "User's blogs fetched successfully",
+            data: blogs,
+            total: totalCount,
+            page: parseInt(page),
+            limit: parseInt(limit),
+        });
     } catch (error) {
-      console.error(error);
-      return respond(res, 500, "Something went wrong");
+        console.error(error);
+        return respond(res, 500, "Something went wrong");
     }
-  });
+});
 
 
 app.get('/', async (req, res) => {
@@ -251,8 +251,8 @@ app.put('/publish-blog/:blogId', verifyAuthToken, async (req, res) => {
         if (!blog) {
             return res.status(404).json({ message: 'Blog not found' });
         }
-        const pBlog = await Blog.publish(blogId);
-        res.status(200).json({ message: 'Blog published successfully', data: pBlog.toJSON() });
+        const pBlog = Blog.publish(blogId);
+        res.status(200).json({ message: 'Blog published successfully' });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Something went wrong, please try again later.' });
@@ -268,7 +268,7 @@ app.put('/unpublish-blog/:blogId', verifyAuthToken, async (req, res) => {
             return res.status(404).json({ message: 'Blog not found' });
         }
         const uBlog = await Blog.unpublish(blogId);
-        res.status(200).json({ message: 'Blog published successfully', data: uBlog.toJSON() });
+        res.status(200).json({ message: 'Blog unpublished successfully' });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Something went wrong, please try again later.' });
@@ -286,7 +286,7 @@ app.delete('/delete-blog/:blogId', verifyAuthToken, async (req, res) => {
 
         // Delete the blog from the database (optional)
         await Blog.findOneAndDelete({ _id: blogId, author: req.user });
-        res.status(200).json({ message: 'Blog deleted successfully', data: Blog.toJSON() });
+        res.status(200).json({ message: 'Blog deleted successfully', data: blog.toJSON() });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Something went wrong, please try again later.' });
